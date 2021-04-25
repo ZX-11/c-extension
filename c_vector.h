@@ -18,7 +18,7 @@ typedef struct { size_t len, cap; void* data[]; } vector;
 #define vec_cap(vec)         (vec_head(vec).cap)
 
 // func vec::default<T>() -> *T
-#define vec_default(T)       (vector *v=expect(malloc(sizeof(size_t)*2+sizeof(T)*16));v->len=0;v->cap=16;(T*)v->data;})
+#define vec_default(T)       ({vector *v=expect(malloc(sizeof(size_t)*2+sizeof(T)*16));v->len=0;v->cap=16;(T*)v->data;})
 
 // func vec::make<T>(length : size_t) -> *T
 #define vec_make(T,_len)     ({expect(_len >= 0);vector *v=expect(malloc(sizeof(size_t)*2+sizeof(T)*_len));v->len=v->cap=_len;(T*)v->data;})
