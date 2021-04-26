@@ -47,8 +47,6 @@
 #define for_range(i,start,end) for (int64_t i=start;i<end;i++)
 #define for_under(i,end) for (size_t i=0;i<end;i++)
 
-#define if_with(...) if(({__VA_ARGS__;}))
-
 // string
 
 static inline char *substring(char* dest, char *src, int64_t start, int64_t end) {
