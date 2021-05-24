@@ -11,15 +11,25 @@
 
 #define typeof(T) __typeof__(T)
 #define var(l,r) typeof(r) l=r
+#define auto __auto_type
 
 // errors
 
-#define expect(expr) ({errno=0;var(_expr,(expr));if(!(_expr)){fprintf(stderr,"unexpected: \""#expr"\" (%s)\n",errno==0?"false":strerror(errno));exit(1);};_expr;})
+#ifdef DEBUG
+#define panic(info) (fprintf(stderr, "panicked at '%s', %s:%zu\n\tinfo: %s\n",__FUNCTION__,__FILE__,__LINE__, info),exit(1))
+#else
+#define panic(info) (fprintf(stderr,"panicked: %s\n",info),exit(1))
+#endif
+
+#define expect(expr) ({errno=0;var(_expr,(expr));if(!(_expr))panic(errno?strerror(errno):"Assert failed: "#expr);_expr;})
 
 // memory
 
 #define new(T,...) ((T*)memcpy(expect(malloc(sizeof(T))), &(T){__VA_ARGS__}, sizeof(T)))
 #define make(T,size) ((T*)expect(calloc(size,sizeof(T))))
+#ifdef _WIN32
+    #define malloc_usable_size(ptr) _msize(ptr)
+#endif
 
 // multiple returns
 
@@ -46,6 +56,13 @@
 #define for_string(p,str) for (char *p=str;*p;p++)
 #define for_range(i,start,end) for (int64_t i=start;i<end;i++)
 #define for_under(i,end) for (size_t i=0;i<end;i++)
+
+// files
+
+#define autoclose __attribute__((cleanup(__close_file)))
+
+__attribute__((always_inline))
+inline void __close_file(void* fpp) { if (*(FILE**)fpp) {fclose(*(FILE**)fpp); *(FILE**)fpp = NULL;} }
 
 // string
 
