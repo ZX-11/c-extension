@@ -13,7 +13,7 @@ __attribute__((always_inline))
 inline void __unique_free(void *ptr) { free_s(*(void**)ptr); }
 
 #define umove(up) ({var(t,up);up=NULL;t;})
-#define ureset(up,ptr) ({free(up);up=ptr;ptr=NULL;up;})
+#define ureset(up,ptr) (free(up),up=ptr,ptr=NULL,up)
 
 // shared_ptr
 
